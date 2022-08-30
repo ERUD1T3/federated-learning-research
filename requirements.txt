@@ -63,6 +63,7 @@ jedi=0.18.1=py39h06a4308_1
 jpeg=9e=h7f8727e_0
 jupyter_client=7.3.4=py39h06a4308_0
 jupyter_core=4.10.0=py39h06a4308_0
+keract=4.5.0=pypi_0
 keras-preprocessing=1.1.2=pyhd3eb1b0_0
 kiwisolver=1.4.2=py39h295c915_0
 krb5=1.19.2=hac12032_0
