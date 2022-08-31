@@ -96,6 +96,7 @@ libxcb=1.15=h7f8727e_0
 libxkbcommon=1.0.1=hfa300c1_0
 libxml2=2.9.14=h74e7548_0
 libxslt=1.1.35=h4e12654_0
+llvmlite=0.39.0=pypi_0
 lz4-c=1.9.3=h295c915_1
 markdown=3.3.4=py39h06a4308_0
 matplotlib=3.5.2=py39h06a4308_0
@@ -111,6 +112,7 @@ ncurses=6.3=h5eee18b_3
 nest-asyncio=1.5.5=py39h06a4308_0
 nspr=4.33=h295c915_0
 nss=3.74=h0370c37_0
+numba=0.56.0=pypi_0
 numpy=1.22.3=py39he7a7128_0
 numpy-base=1.22.3=py39hf524024_0
 oauthlib=3.2.0=pyhd3eb1b0_1
