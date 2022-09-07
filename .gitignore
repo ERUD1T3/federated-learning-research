@@ -130,4 +130,4 @@ dmypy.json
 
 
 # anything in the model folder
-tf-refs/model/
+# tf-refs/model/
