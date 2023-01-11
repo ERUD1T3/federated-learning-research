@@ -131,3 +131,7 @@ dmypy.json
 
 # anything in the model folder
 # tf-refs/model/
+
+
+# csv files
+*.csv
