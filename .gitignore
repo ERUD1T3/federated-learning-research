@@ -135,3 +135,9 @@ dmypy.json
 
 # csv files
 *.csv
+
+# vscode    
+.vscode/
+
+# jypyter
+.ipynb_checkpoints/
