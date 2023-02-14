@@ -1,3 +1,14 @@
+############################################################
+#   Dev(s): Josias Moukpe, 
+#   Class: Research in CS
+#   Date: 2/14/2023
+#   file: network.py
+#   Description: main class for the network of nodes
+#   that will be used to train the nodes models in parallel
+#   using the federated learning algorithm
+#############################################################
+
+
 import matplotlib.pyplot as plt
 import networkx as nx
 from itertools import combinations
@@ -6,102 +17,21 @@ from random import random
 import numpy as np
 import pandas as pd
 
-class Message:
-    '''Message passed by node'''
-    def __init__(self, sender, receiver, content):
-        self.sender = sender
-        self.receiver = receiver
-        self.content = content
-        self.timestamp = 0
-
-    def __str__(self) -> str:
-        return f'Message {self.content} from {self.sender} to {self.receiver}'
-
-    
-class Node:
-    '''A node device in the network'''
-    def __init__(self, id, data):
-        self.id = id
-        self.neighbors = []
-        # self.constraints = []
-        self.model = None
-        self.data = data
-        self.is_trained = False
-        self.is_updated = False
-        self.is_selected = False
-        self.is_sent = False
-        self.is_received = False
-        self.spam_params = [] # parameters for spam detection according to power law
-
-        # message queues 
-        self.incoming_msgs = []
-        self.outgoing_msgs = []
-
-        # # initialize list of incoming messages at random
-        # for neighbor in self.neighbors:
-        #     # generate a random message
-        #     msg = Message(self.id, neighbor.id, None)
-        #     # add the message to the incoming messages
-        #     self.incoming_msgs.append(msg)
-    
-    def __str__(self):
-        return f'Node {self.id}'
-
-    def __repr__(self):
-        return f'Node {self.id}'
-
-    
-    def process_incoming_msgs(self):
-        '''Process incoming messages'''
-        for msg in self.incoming_msgs:
-            # process the message
-            res = self.process_msg(msg)
-            self.outgoing_msgs.append(res)
-        # clear the incoming messages
-        self.incoming_msgs = []
-
-    def send_outgoing_msgs(self):
-        '''Send outgoing messages'''
-        for msg in self.outgoing_msgs:
-            # send the message
-            self.send_msg(msg)
-        # clear the outgoing messages
-        self.outgoing_msgs = []
-
-    def send_msg(self, msg):
-        '''Send a message to a neighbor'''
-        # get the receiver node
-        receiver = msg.receiver
-        
-        # add the message to the receiver's incoming messages
-        receiver.incoming_msgs.append(msg)
-        # set the message as sent
-        self.is_sent = True
 
 
-    def process_msg(self, msg):
-        '''Process a message'''
-        # process the message
-        msg.content = 'processed'
-        return msg
-
-    def run(self):
-        '''Run the node'''
-        # do stuff 
-        # process incoming messages
-        print(f'Processing incoming messages for {self}')
-        self.process_incoming_msgs()
-        # send outgoing messages
-        print(f'Sending outgoing messages for {self}')
-        self.send_outgoing_msgs()
-        # print queues
-        print(f'Incoming messages for {self}: {self.incoming_msgs}')
-        print(f'Outgoing messages for {self}: {self.outgoing_msgs}')
-
-        
 class Network:
     '''Network of nodes implemented as a graph'''
-    def __init__(self, nodes=None):
+    def __init__(self, nodes=None, edges=None, topology='random', connectivity='powerlaw'):
+        '''
+        Initialize the Network class
+        Input:
+            nodes: nodes in the network (dict)
+            edges: edges in the network (dict)
+            topology: topology of the network (str)
+            connectivity: connectivity of the network (str)
+        Output:
+            None
+        '''
 
         if nodes is None:
             self.nodes = {}
@@ -112,8 +42,14 @@ class Network:
             n = 100
             # generate a random number of edges
             m = np.random.randint(5, 10)
-            # generate a random graph according to power law
-            G = nx.powerlaw_cluster_graph(n, m, 0.1)
+
+            if connectivity == 'powerlaw':
+                # generate a random graph according to power law
+                G = nx.powerlaw_cluster_graph(n, m, 0.1)
+            elif connectivity == 'random':
+                # generate a random graph
+                G = nx.gnm_random_graph(n, m)
+
             # get the nodes
             nodes = list(G.nodes)
             # print(f'Nodes: {nodes}')
@@ -215,59 +151,3 @@ class Network:
             # print(self)
             # # plot the network
             # self.plot()
-
-# all the columns
-
-def calc_distance(node1, node2):
-    '''Calculate the distance between two points'''
-    # get lat and longs of nodes as floats
-    lat1 = node1.data['Latitude_Degrees'].values[0]
-    lon1 = node1.data['Longitude_Degrees'].values[0]
-    lat2 = node2.data['Latitude_Degrees'].values[0]
-    lon2 = node2.data['Longitude_Degrees'].values[0]
-
-    # print(f'lat1: {lat1}, lon1: {lon1}, lat2: {lat2}, lon2: {lon2}')
-
-
-    # convert to radians
-    lat1 = np.radians(lat1)
-    lon1 = np.radians(lon1)
-    lat2 = np.radians(lat2)
-    lon2 = np.radians(lon2)
-    # calculate the distance
-    dlon = lon2 - lon1
-    dlat = lat2 - lat1
-    a = np.sin(dlat / 2)**2 + np.cos(lat1) * np.cos(lat2) * np.sin(dlon / 2)**2
-    c = 2 * np.arcsin(np.sqrt(a))
-    r = 6371 # Radius of earth in kilometers. Use 3956 for miles
-    return c * r
-            
-def main():
-    # read csv file into a dataframe
-    df = pd.read_csv('data/bleaching.csv')          
-    # split the data by Site_ID
-    sites = df.groupby('Site_ID')
-    print(f'Number of sites: {len(sites)}')
-    # create a node for every site and add the site data to the node
-    nodes = {}
-    for site in sites:
-        # get the site id
-        site_id = site[0]
-        # get the site data
-        site_data = site[1]
-        # create a node for the site
-        node = Node(site_id, site_data)
-
-        # add the node to the nodes dictionary
-        nodes[site_id] = node
-
-    # create the network
-    network = Network(nodes)
-    # print the network
-    print(network)
-    # plot the network
-    network.plot()
-   
-
-if __name__ == '__main__':
-    main()
