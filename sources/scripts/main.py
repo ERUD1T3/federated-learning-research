@@ -11,6 +11,7 @@
 # imports
 import argparse
 from network import Network
+from mnode import Mnode
 
 def parse_args():
     '''parse the arguments for the program'''
@@ -32,37 +33,50 @@ def parse_args():
 
 
 def main():
-    '''main of the program'''
+    '''
+    main of the program
+    Input:
+        None
+    Output:
+        None
+    
+    '''
     args = parse_args() # parse arguments
     print(' args received',args)
     
-    # hyperparameters
-    h = {}
-    # read csv file into a dataframe
-    df = pd.read_csv('data/bleaching.csv')          
-    # split the data by Site_ID
-    sites = df.groupby('Site_ID')
-    print(f'Number of sites: {len(sites)}')
-    # create a node for every site and add the site data to the node
-    nodes = {}
-    for site in sites:
-        # get the site id
-        site_id = site[0]
-        # get the site data
-        site_data = site[1]
-        # create a node for the site
-        node = Node(site_id, site_data)
-        # add the node to the nodes dictionary
-        nodes[site_id] = node
+    # node model hyperparameters
+    h = {
+        'num_epochs': 10,
+        'batch_size': 32,
+        'learning_rate': 0.01,
+        # 'optimizer': 'sgd',
+        # 'loss': 'mse',
+        # 'activation': 'relu',
+        # 'hidden_dims': [28, 28],
+        # ... TODO: find minimal set of hyperparameters
+    }
+
+    # network configuration
+    config = {
+        'num_nodes': 100,
+        'topology': 'random',
+        'connectivity': 'powerlaw',
+        'model': 'mlp',
+        'dataset': 'mnist',
+    }
+
 
     # create the network
-    network = Network(nodes)
+    network = Network(
+        hyperparams=h, 
+        config=config
+    )
     # print the network
     print(network)
     # plot the network
     network.plot()
     # simulate the network
-    # network.simulate()
+    network.simulate()
 
 
 

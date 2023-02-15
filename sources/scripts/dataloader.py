@@ -9,44 +9,76 @@
 
 import csv
 import random
+import os
 
 class DataLoader:
     '''
     Class to handle data loading
     '''
 
-    def __init__(self, data_path, batch_size, shuffle=True):
+    def __init__(self, data_path, shuffle=False):
         '''
         Initialize the DataLoader class
         Input:
             data_path: path to the data (string)
-            batch_size: size of the batch (int)
             shuffle: whether to shuffle the data or not (bool)
         Output:
             None
 
         '''
         self.data_path = data_path
-        self.batch_size = batch_size
         self.shuffle = shuffle
-        self.data = self.read_data()
 
-    def gen_data(self):
+    def get_batch(self, batch_size=1):
         '''
         Read in the data and yield batches
         Input:
-            None
+            batch_size: size of the batch (int)
         Output:
             data: data in batches (list)
         '''
 
-        # shuffle data
-        if self.shuffle:
-            random.shuffle(self.data)
+        batch = []
 
-        # yield batches
-        for i in range(0, len(self.data), self.batch_size):
-            yield self.data[i:i+self.batch_size]
+        # open the csv file
+        with open(self.data_path, 'r') as f:
+            # create a csv reader
+            csv_reader = csv.reader(f)
+            # iterate through the rows
+            for row in csv_reader:
+                # collect the data in batches
+                batch.append(row)
 
+                # yield the batch when it is full
+                if len(batch) == batch_size:
+                    yield batch
+                    batch = []
+
+
+        # yield the last batch if it is not empty
+        if len(batch) > 0:
+            yield batch
+
+    @staticmethod
+    def load_dir(self, dir_path):
+        '''
+        return a list of filepaths in a directory
+        Input:
+            dir_path: path to the directory (string)
+        Output:
+            filepaths: list of filepaths (list)
+        '''
+
+        filepaths = []
+        # iterate through the files in the directory
+        for file in os.listdir(dir_path):
+            # get the full path to the file
+            filepath = os.path.join(dir_path, file)
+            # add the filepath to the list
+            filepaths.append(filepath)
+
+        return filepaths
+            
+        
 
         

@@ -5,16 +5,18 @@
 #   file: mnode.py
 #   Description: main class for a node in the network that 
 #   will store the model training on the data
+#   TODO: figure out who best manages the data (node or network level)
 #############################################################
 
 import numpy as np
 from message import Message
 from embedding import Embedding
 from dataloader import DataLoader
+from models.ann import ANN
 
 class Mnode:
     '''A model node on the network'''
-    def __init__(self, id, data):
+    def __init__(self, id, data_path):
         '''
         Initialize a model node
         Input:
@@ -26,26 +28,35 @@ class Mnode:
 
         self.id = id
         self.neighbors = []
-        # self.constraints = []
-        self.model = None
-        self.data = data
+        
+        self.model = ANN(
+            input_dim=8,
+            output_dim=1,
+            hidden_dims=[28, 28],
+            activation='relu',
+        )
+        self.embedding = Embedding()
+        self.data = DataLoader(data_path=data_path)
+
+        # model flags
         self.is_trained = False
         self.is_updated = False
         self.is_selected = False
+
+        # message flags
         self.is_sent = False
         self.is_received = False
-        self.embedding_vec = [] # parameters for spam detection according to power law
 
         # message queues 
         self.incoming_msgs = []
         self.outgoing_msgs = []
 
-        # # initialize list of incoming messages at random
-        # for neighbor in self.neighbors:
-        #     # generate a random message
-        #     msg = Message(self.id, neighbor.id, None)
-        #     # add the message to the incoming messages
-        #     self.incoming_msgs.append(msg)
+        # any constraints on the node or model
+        self.constraints = [] #TODO: figure out how to include constraints
+
+        # initialize list of messages to send
+        self.msgs_to_send = [Message()]
+
     
 
     # TODO: find better ways to represent the nodes
