@@ -59,25 +59,8 @@ class DataLoader:
         if len(batch) > 0:
             yield batch
 
-    @staticmethod
-    def load_dir(self, dir_path):
-        '''
-        return a list of filepaths in a directory
-        Input:
-            dir_path: path to the directory (string)
-        Output:
-            filepaths: list of filepaths (list)
-        '''
-
-        filepaths = []
-        # iterate through the files in the directory
-        for file in os.listdir(dir_path):
-            # get the full path to the file
-            filepath = os.path.join(dir_path, file)
-            # add the filepath to the list
-            filepaths.append(filepath)
-
-        return filepaths
+        # TODO: shuffle the data in batch before yielding
+ 
             
         
 

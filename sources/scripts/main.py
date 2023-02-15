@@ -72,6 +72,7 @@ def main():
         'topology': 'random',
         'connectivity': 'powerlaw',
         'encryption': 'none', # not to integrate yet
+        'comm_rounds': 10,
         # 'model': 'mlp',
     }
 

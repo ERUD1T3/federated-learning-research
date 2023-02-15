@@ -11,9 +11,10 @@
 
 import matplotlib.pyplot as plt
 import networkx as nx
-from random import random
 import numpy as np
 from mnode import Mnode
+from utils import load_dir
+from message import Message
 
 
 class Network:
@@ -34,6 +35,13 @@ class Network:
         Output:
             None
         '''
+
+        self.hyperparams = hyperparams
+        self.config = config
+
+        # load the datafiles name from the data directory
+        self.datafiles = load_dir(config['data_dir'])
+        # each node will have a datafile
 
         # initialize the network
 
@@ -89,7 +97,12 @@ class Network:
         return f'Network with {len(self.nodes)} nodes and {len(self.edges)} edges'
 
     def plot(self):
-        '''Plot the network'''
+        '''Plot the network
+        Input:
+            None
+        Output:
+            None
+        '''
         # # get the nodes
         # nodes = list(self.nodes.keys())
         # # get the edges
@@ -107,58 +120,92 @@ class Network:
         plt.rcParams['figure.figsize'] = [10, 10]
         plt.show()
 
-    def add_node(self, id, neighbors):
-        '''Add a node to the network'''
+    def add_node(self, id, neighbors=[]):
+        '''Add a node to the network
+        Input:
+            id: id of the node (int)
+            neighbors: neighbors of the node (list)
+        Output:
+            None
+        
+        '''
         # create the node
-        node = Node(id, neighbors)
+        node = Mnode(id, self.datafiles[id], self.hyperparams)
         # add the node to the network
         self.nodes[id] = node
-        # add the edges to the network
-        for neighbor in neighbors:
-            self.edges[(id, neighbor.id)] = 1
+        if neighbors:
+            # add the edges to the network
+            for neighbor in neighbors:
+                self.edges[(id, neighbor.id)] = 1
 
-    def add_edge(self, node1, node2, threshold=1000):
-        '''Add an edge to the network based on distance'''
-        # calculate the distance between the nodes
-        dist = calc_distance(node1, node2)
+    def add_edge(self, node1, node2, geo=False, threshold=None):
+        '''Add an edge to the network based on distance
+        Input:
+            node1: node 1 (Mnode)
+            node2: node 2 (Mnode)
+            geo: if True, use geodesic distance, else use euclidean distance (bool)
+            threshold: threshold for the distance (float)
+        Output:
+            None
+        '''
+        # calcu
         # check if the distance is below the threshold
         # if dist < threshold:
+
+        # get the geodesic distance between the two nodes
+        if geo:
+            dist = node1.embedding.geodesic_distance(node2.embedding)
+        else:
+            # get the euclidean distance between the two nodes
+            dist = node1.embedding.euclidean_distance(node2.embedding)
+
         # add the edge to the network
         self.edges[(node1.id, node2.id)] = dist
+
         # add the edge to the nodes
         node1.neighbors.append(node2)
         node2.neighbors.append(node1)
 
-            
 
     def get_node(self, id):
-        '''Get a node from the network'''
+        '''Get a node from the network
+        Input:
+            id: id of the node (int)
+        Output:
+            node: node object (Mnode)
+        '''
         return self.nodes[id]
 
     def get_neighbors(self, id):
-        '''Get a node's neighbors'''
+        '''Get a node's neighbors
+        Input:
+            id: id of the node (int)
+        Output:
+            neighbors: neighbors of the node (list)
+        '''
         return self.nodes[id].neighbors
     
-    def simulate(self, iterations=10):
-        '''Run the message passing simulation'''
+    def simulate(self):
+        '''
+        Run the message passing simulation on the network
+        Input:
+            None
+        Output:
+            None
+        '''
         # initialize the incoming messages at random for all nodes
         for node in self.nodes.values():
-            # get node object
-            # node = self.get_node(node)
             # generate a random message to each neighbor
             for neighbor in node.neighbors:
                 print(f'Node {node} has neighbor {neighbor}')
                 # generate a random message
-                msg = Message(node, neighbor, None)
+                msg = Message(node, neighbor, "hello World")
                 # add the message to the incoming messages
                 node.incoming_msgs.append(msg)
         
         # run the simulation
-        for i in range(iterations):
+        for i in range(self.config['comm_rounds']):
             # run each node
             for node in self.nodes.values():
                 node.run() # nodes communicate with each other
-            # # print the network
-            # print(self)
-            # # plot the network
-            # self.plot()
+        

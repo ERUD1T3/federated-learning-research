@@ -13,7 +13,7 @@ import time
 class Message:
     '''Message passed between nodes during training'''
 
-    def __init__(self, sender_id, receiver_id, content):
+    def __init__(self, sender, receiver, content):
         '''
         Initialize the Message class
         Input:
@@ -25,10 +25,11 @@ class Message:
         '''
 
         self.message_id = np.random.randint(0, 1000000) # random message id for now
-        self.sender = sender_id
-        self.receiver = receiver_id
+        self.sender = sender
+        self.receiver = receiver
         self.content = content
         self.timestamp = time.time() # time at which the message was sent
+        self.size = len(content) # size of the message
 
     def __str__(self):
         return f'Message {self.content} from {self.sender} to {self.receiver}'
@@ -38,3 +39,6 @@ class Message:
 
     def __eq__(self, other):
         return self.content == other.content
+    
+    def __len__(self):
+        return self.size

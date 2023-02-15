@@ -21,13 +21,13 @@ class Mnode:
         Initialize a model node
         Input:
             id: id of the node (int)
-            data: data to train on (np.array)
+            data_path: path to the data (string)
         Output:
             None
         '''
 
         self.id = id
-        self.neighbors = []
+        self.neighbors = [] # refs to nodes that are neighbors
 
         # intialize the model
         self.model = ANN(hyperparams=hyperparams)
@@ -65,7 +65,13 @@ class Mnode:
 
     
     def process_incoming_msgs(self):
-        '''Process incoming messages'''
+        '''
+        Process incoming messages
+        Input:
+            None
+        Output:
+            None
+        '''
         for msg in self.incoming_msgs:
             # process the message
             res = self.process_msg(msg)
@@ -74,7 +80,13 @@ class Mnode:
         self.incoming_msgs = []
 
     def send_outgoing_msgs(self):
-        '''Send outgoing messages'''
+        '''
+        Send outgoing messages
+        Input:
+            None
+        Output:
+            None
+        '''
         for msg in self.outgoing_msgs:
             # send the message
             self.send_msg(msg)
@@ -82,7 +94,13 @@ class Mnode:
         self.outgoing_msgs = []
 
     def send_msg(self, msg):
-        '''Send a message to a neighbor'''
+        '''
+        Send a message to a neighbor
+        Input:
+            msg: message to send (Message)
+        Output:
+            None
+        '''
         # get the receiver node
         receiver = msg.receiver
         
@@ -92,14 +110,28 @@ class Mnode:
         self.is_sent = True
 
     def process_msg(self, msg):
-        '''Process a message'''
+        '''
+        Process a message, i.e. update the model or
+        send a new message or do nothing, etc, 
+        Input:
+            msg: message to process (Message)
+        Output:
+            msg: processed message (Message)
+        '''
         # process the message
         msg.content = 'processed'
         return msg
 
     def run(self):
-        '''Run the node'''
-        # do stuff 
+        '''
+        Run the node which includes the loading of the data batch,
+        training the model, and sending the messages
+            TODO: add the training part
+        Input:
+            None
+        Output:
+            None
+        '''
         # process incoming messages
         print(f'Processing incoming messages for {self}')
         self.process_incoming_msgs()

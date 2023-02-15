@@ -15,7 +15,7 @@ class Embedding:
     a higher dimensional embedding space
     '''
 
-    def __init__(self, embed_dim=4):
+    def __init__(self):
         '''
         Initialize the Embedding class
         Input:
@@ -24,13 +24,14 @@ class Embedding:
             None
         '''
 
-        self.embed_dim = embed_dim
-        self.embedding = np.array([
+        self.vector = np.array([
             0, # longitude
             0, # latitude
             0, # elevation
             0, # 0 land, 1 water
         ])
+
+        self.embed_dim = len(self.vector)
 
     def set_embedding(self, **kwargs):
         '''
@@ -40,14 +41,14 @@ class Embedding:
         Output:
             None
         '''
-        self.embedding = np.array([
+        self.vector = np.array([
             kwargs['longitude'],
             kwargs['latitude'],
             kwargs['elevation'],
             kwargs['water']
         ])
 
-    def get_geo_distance(self, other):
+    def geodesic_distance(self, other):
         '''
         Compute the geodesic distance between two nodes
         Input:
@@ -57,8 +58,8 @@ class Embedding:
         '''
 
         # get the coordinates of the two nodes
-        lat1, lon1 = self.embedding[1], self.embedding[0]
-        lat2, lon2 = other.embedding[1], other.embedding[0]
+        lat1, lon1 = self.vector[1], self.vector[0]
+        lat2, lon2 = other.vector[1], other.vector[0]
 
         # convert to radians
         lat1, lon1, lat2, lon2 = map(np.radians, [lat1, lon1, lat2, lon2])
@@ -73,7 +74,7 @@ class Embedding:
         # return the distance
         return c * r
 
-    def get_euclidean_distance(self, other):
+    def euclidean_distance(self, other):
         '''
         Compute the euclidean distance between two nodes with 
         the same embedding space and some coefficients
@@ -90,7 +91,7 @@ class Embedding:
         ])
 
         # compute the distance
-        distance = np.linalg.norm(self.embedding - other.embedding) * coefficients
+        distance = np.linalg.norm(self.vector - other.vector) * coefficients
 
         # return the distance
         return distance
@@ -104,7 +105,7 @@ class Embedding:
         Output:
             string representation of the embedding vector (string)
         '''
-        return f'Embedding({self.embedding})'
+        return f'Embedding({self.vector})'
 
     
     def __repr__(self) -> str:
@@ -115,4 +116,4 @@ class Embedding:
         Output:
             string representation of the embedding vector (string)
         '''
-        return f'Embedding({self.embedding})'
+        return f'Embedding({self.vector})'
