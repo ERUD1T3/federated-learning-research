@@ -71,7 +71,7 @@ def main():
         'num_edges': 150,
         'topology': 'random',
         'connectivity': 'powerlaw',
-        'encryption': 'rsa'
+        'encryption': 'none', # not to integrate yet
         # 'model': 'mlp',
     }
 
