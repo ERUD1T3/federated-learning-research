@@ -11,11 +11,9 @@
 
 import matplotlib.pyplot as plt
 import networkx as nx
-from itertools import combinations
 from random import random
 import numpy as np
-import pandas as pd
-
+from mnode import Mnode
 
 
 class Network:
@@ -44,40 +42,47 @@ class Network:
             self.edges = {}
 
             # initialize the network at random
-            # generate a random number of nodes
-            n = 100
-            # generate a random number of edges
-            m = np.random.randint(5, 10)
+            # get a random number of nodes
+            n = config['num_nodes']
+            # get a random number of edges
+            e = config['num_edges']
 
             if config['connectivity'] == 'powerlaw':
                 # generate a random graph according to power law
-                G = nx.powerlaw_cluster_graph(n, m, 0.1)
+                self.G = nx.powerlaw_cluster_graph(n, e, 0.1)
             elif config['connectivity'] == 'random':
                 # generate a random graph
-                G = nx.gnm_random_graph(n, m)
+                self.G = nx.gnm_random_graph(n, e)
 
             # get the nodes
-            nodes = list(G.nodes)
+            node_ids = list(self.G.nodes)
             # print(f'Nodes: {nodes}')
             # get the edges
-            edges = list(G.edges)
+            edge_ids = list(self.G.edges)
             # print(f'edges: {edges}')
             # add the nodes to the network
-            for node in nodes:
-                self.add_node(node)
+            for node_id in node_ids:
+                self.add_node(node_id)
             # add the edges to the network
-            for edge in edges:
-                self.add_edge(edge[0], edge[1])
-        else:
-            self.nodes = nodes
-            self.edges = {}
+            for edge_id in edge_ids:
+                # get the nodes
+                node1 = self.nodes[edge_id[0]]
+                node2 = self.nodes[edge_id[1]]
+                # add the edge to the network
+                self.add_edge(node1, node2)
 
-            # connected all the node to each other with distance as weight
-            for id1, id2 in combinations(nodes, 2):
-                # get node 1 and node 2
-                node1 = self.nodes[id1]
-                node2 = self.nodes[id2]
-                self.add_edge(node1, node2) # TODO: add threshold so sites too far away are not connected
+        else:
+            # TODO: load the network from a file
+            pass
+            # self.nodes = nodes
+            # self.edges = {}
+
+            # # connected all the node to each other with distance as weight
+            # for id1, id2 in combinations(nodes, 2):
+            #     # get node 1 and node 2
+            #     node1 = self.nodes[id1]
+            #     node2 = self.nodes[id2]
+            #     self.add_edge(node1, node2) # TODO: add threshold so sites too far away are not connected
 
 
     def __str__(self):
@@ -85,19 +90,19 @@ class Network:
 
     def plot(self):
         '''Plot the network'''
-        # get the nodes
-        nodes = list(self.nodes.keys())
-        # get the edges
-        edges = list(self.edges.keys())
-        # create the graph
-        G = nx.Graph()
-        # add the nodes
-        G.add_nodes_from(nodes)
-        # add the edges
-        G.add_edges_from(edges)
+        # # get the nodes
+        # nodes = list(self.nodes.keys())
+        # # get the edges
+        # edges = list(self.edges.keys())
+        # # create the graph
+        # G = nx.Graph()
+        # # add the nodes
+        # G.add_nodes_from(nodes)
+        # # add the edges
+        # G.add_edges_from(edges)
         # plot the graph
-        nx.draw(G, with_labels=True)
-        plt.title("Random Graph Generation")
+        nx.draw(self.G, with_labels=True)
+        plt.title("Network")
         # make plot bigger
         plt.rcParams['figure.figsize'] = [10, 10]
         plt.show()

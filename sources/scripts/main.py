@@ -66,10 +66,12 @@ def main():
 
     # network configuration
     config = {
+        'seed': 42,
         'num_nodes': 100,
+        'num_edges': 150,
         'topology': 'random',
         'connectivity': 'powerlaw',
-        'encryption': 'rsa',
+        'encryption': 'rsa'
         # 'model': 'mlp',
     }
 
