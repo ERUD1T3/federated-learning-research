@@ -40,7 +40,7 @@ class Network:
         self.config = config
 
         # load the datafiles name from the data directory
-        self.datafiles = load_dir(config['data_dir'])
+        self.datafiles = load_dir(hyperparams['data_dir'])
         # each node will have a datafile
 
         # initialize the network

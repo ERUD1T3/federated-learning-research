@@ -11,8 +11,6 @@
 # imports
 import argparse
 from network import Network
-from mnode import Mnode
-
 def parse_args():
     '''parse the arguments for the program'''
 
@@ -59,8 +57,8 @@ def main():
         'hidden_dims': [28, 28],
         'momentum': 0.9,
         'weight_decay': 0.0005,
-        'data_dir': '/datasets/bleaching/'
-        # 'k-fold': 5,
+        'data_dir': '../datasets/bleaching',
+        'k_fold': 5,
         # ... TODO: find minimal set of hyperparameters
     }
 
@@ -68,7 +66,7 @@ def main():
     config = {
         'seed': 42,
         'num_nodes': 100,
-        'num_edges': 150,
+        'num_edges': 50,
         'topology': 'random',
         'connectivity': 'powerlaw',
         'encryption': 'none', # not to integrate yet

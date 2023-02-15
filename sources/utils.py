@@ -45,3 +45,25 @@ def load_dir(dir_path):
         filepaths.append(filepath)
 
     return filepaths
+
+def log_csv(path, histories, headers):
+    '''
+    log the data to the csv file
+    Input:
+        path: path to the csv file (string)
+        histories: list of lists of data (list)
+        headers: list of headers (list)
+    Output:
+        None
+    '''
+    headers = ['e'] + headers
+    # open the file
+    with open(path, 'w') as f:
+        # write the headers
+        f.write(','.join(headers) + '\n')
+        # write the data
+        for h in range(len(histories[0])):
+            line = f'{h},'
+            for hh in range(len(histories)):
+                line += str(histories[hh][h]) + ','
+            f.write(line[:-1] + '\n')

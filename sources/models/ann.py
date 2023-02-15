@@ -25,7 +25,7 @@ class ANN:
     def __init__(
         self, 
         hyperparams,
-        debug=True,
+        debug=False,
     ):
         
         '''
@@ -35,20 +35,20 @@ class ANN:
             debug: debug mode (bool)
         '''
         # hyperparameters
-        self.hidden_units = hyperparams['hidden_units']
+        self.hidden_units = hyperparams['hidden_dims']
         self.learning_rate = hyperparams['learning_rate']
         self.momentum = hyperparams['momentum']
-        self.decay = hyperparams['decay']
+        self.decay = hyperparams['weight_decay']
         self.k = hyperparams['k_fold']
-        self.epochs = hyperparams['epochs']
-        self.input_units = hyperparams['input_units']
-        self.output_units = hyperparams['output_units']
+        self.epochs = hyperparams['num_epochs']
+        self.input_units = hyperparams['input_dim']
+        self.output_units = hyperparams['output_dim']
         self.debug = debug
 
         # initialize the weights at random based 
         # the topology of the network
         self.topology = [self.input_units] + \
-                        hyperparams['hidden_units'] + \
+                        hyperparams['hidden_dims'] + \
                         [self.output_units]
 
         self.weights = {
@@ -132,10 +132,10 @@ class ANN:
         '''
         self.learning_rate = hyperparams['learning_rate']
         self.momentum = hyperparams['momentum']
-        self.decay = hyperparams['decay']
-        self.hidden_units = hyperparams['hidden_units']
+        self.decay = hyperparams['weight_decay']
+        self.hidden_units = hyperparams['hidden_dims']
         self.topology = [self.input_units] + \
-            hyperparams['hidden_units'] + \
+            hyperparams['hidden_dims'] + \
             [self.output_units]
     
     def num_params(self):

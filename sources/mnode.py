@@ -52,7 +52,7 @@ class Mnode:
         self.constraints = [] #TODO: figure out how to include constraints
 
         # initialize list of messages to send
-        self.msgs_to_send = [Message()]
+        # self.msgs_to_send = [Message()]
 
     
 
