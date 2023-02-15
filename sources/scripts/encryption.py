@@ -16,7 +16,5 @@ class encryption:
         TODO: implementation TBD
     '''
     def __init__(self):
-        self.alphabet = 'abcdefghijklmnopqrstuvwxyz'
-        self.key = random.randint(0, 26)
-        self.encrypted = ''
-        self.decrypted = ''
+        pass
+        # TODO: implementation TBD

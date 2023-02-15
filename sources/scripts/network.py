@@ -13,7 +13,6 @@ import matplotlib.pyplot as plt
 import networkx as nx
 from itertools import combinations
 from random import random
-# from scipy.stats import powerlaw
 import numpy as np
 import pandas as pd
 
@@ -21,14 +20,19 @@ import pandas as pd
 
 class Network:
     '''Network of nodes implemented as a graph'''
-    def __init__(self, nodes=None, edges=None, hyperparams=None, config=None):
+    def __init__(self, 
+        config=None,
+        hyperparams=None, 
+        nodes=None, 
+        edges=None
+    ):
         '''
         Initialize the Network class
         Input:
             nodes: nodes in the network (dict)
             edges: edges in the network (dict)
-            topology: topology of the network (str)
-            connectivity: connectivity of the network (str)
+            hyperparams: hyperparameters for the network (dict)
+            config: configuration for the network (dict)
         Output:
             None
         '''
@@ -45,10 +49,10 @@ class Network:
             # generate a random number of edges
             m = np.random.randint(5, 10)
 
-            if connectivity == 'powerlaw':
+            if config['connectivity'] == 'powerlaw':
                 # generate a random graph according to power law
                 G = nx.powerlaw_cluster_graph(n, m, 0.1)
-            elif connectivity == 'random':
+            elif config['connectivity'] == 'random':
                 # generate a random graph
                 G = nx.gnm_random_graph(n, m)
 

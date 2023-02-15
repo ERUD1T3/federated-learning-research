@@ -16,7 +16,7 @@ from models.ann import ANN
 
 class Mnode:
     '''A model node on the network'''
-    def __init__(self, id, data_path):
+    def __init__(self, id, data_path, hyperparams=None):
         '''
         Initialize a model node
         Input:
@@ -28,13 +28,10 @@ class Mnode:
 
         self.id = id
         self.neighbors = []
-        
-        self.model = ANN(
-            input_dim=8,
-            output_dim=1,
-            hidden_dims=[28, 28],
-            activation='relu',
-        )
+
+        # intialize the model
+        self.model = ANN(hyperparams=hyperparams)
+
         self.embedding = Embedding()
         self.data = DataLoader(data_path=data_path)
 

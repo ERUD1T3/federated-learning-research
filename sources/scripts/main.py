@@ -20,6 +20,8 @@ def parse_args():
         description='Federated Peer-to-Peer Learning for Artificial Neural Networks'
     )
 
+    # TODO: add arguments necessary for running experiments
+
     parser.add_argument(
         '--debug',
         action='store_true',
@@ -46,13 +48,19 @@ def main():
     
     # node model hyperparameters
     h = {
+        'input_dim': 10, # TODO: figure out how to get this from the dataset,
+        'output_dim': 1,
         'num_epochs': 10,
         'batch_size': 32,
         'learning_rate': 0.01,
         # 'optimizer': 'sgd',
-        # 'loss': 'mse',
-        # 'activation': 'relu',
-        # 'hidden_dims': [28, 28],
+        'loss': 'mse',
+        'activation': 'relu',
+        'hidden_dims': [28, 28],
+        'momentum': 0.9,
+        'weight_decay': 0.0005,
+        'data_dir': '/datasets/bleaching/'
+        # 'k-fold': 5,
         # ... TODO: find minimal set of hyperparameters
     }
 
@@ -61,8 +69,8 @@ def main():
         'num_nodes': 100,
         'topology': 'random',
         'connectivity': 'powerlaw',
-        'model': 'mlp',
-        'dataset': 'mnist',
+        'encryption': 'rsa',
+        # 'model': 'mlp',
     }
 
 
@@ -77,9 +85,6 @@ def main():
     network.plot()
     # simulate the network
     network.simulate()
-
-
-
     
 if __name__ == '__main__':
     main()

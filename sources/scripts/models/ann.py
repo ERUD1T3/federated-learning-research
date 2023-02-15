@@ -21,18 +21,18 @@ from copy import deepcopy
 class ANN:
     '''
     Feed Forward Artificial Neural Network Class
-    1 Input, 1 Hidden, 1 Output Layer
     '''
     def __init__(
         self, 
         hyperparams,
-        input_units, 
-        output_units, 
         debug=True,
     ):
         
         '''
         Initialize the Artificial Neural Network
+        Input:
+            hyperparams: hyperparameters for the ANN (dict)
+            debug: debug mode (bool)
         '''
         # hyperparameters
         self.hidden_units = hyperparams['hidden_units']
@@ -41,8 +41,8 @@ class ANN:
         self.decay = hyperparams['decay']
         self.k = hyperparams['k_fold']
         self.epochs = hyperparams['epochs']
-        self.input_units = input_units
-        self.output_units = output_units
+        self.input_units = hyperparams['input_units']
+        self.output_units = hyperparams['output_units']
         self.debug = debug
 
         # initialize the weights at random based 
@@ -73,6 +73,11 @@ class ANN:
         '''
         Initialize the weights at random
         https://machinelearningmastery.com/weight-initialization-for-deep-learning-neural-networks/
+
+        Input:
+            None
+        Output:
+            scaled: scaled random number (float)
         '''
         # number of nodes in the previous layer
         n = self.input_units
@@ -89,6 +94,12 @@ class ANN:
         '''
         Print the weights of the Artificial Neural Network
         with 2 decimal places
+
+        Input:
+            None
+        Output:
+            None
+
         '''
         # print('Weights: ', self.weights)
         for key, value in self.weights.items():
@@ -102,6 +113,11 @@ class ANN:
     def print_network(self):
         '''
         Print the network
+
+        Input:
+            None
+        Output:
+            None
         '''
         print('Network: ', self.topology)
         self.print_weights()
@@ -109,6 +125,10 @@ class ANN:
     def set_hyperparameters(self, hyperparams):
         '''
         Set the hyperparameters of the Artificial Neural Network
+        Input:
+            hyperparams: hyperparameters for the ANN (dict)
+        Output:
+            None
         '''
         self.learning_rate = hyperparams['learning_rate']
         self.momentum = hyperparams['momentum']
@@ -121,6 +141,11 @@ class ANN:
     def num_params(self):
         '''
         Get the number of parameters
+
+        Input:
+            None
+        Output:
+            num_parameters: number of parameters (int)
         '''
         num_parameters = 0
         for t in range(1, len(self.topology)):
@@ -130,6 +155,12 @@ class ANN:
     def save(self, filename=None):
         '''
         Save the Artificial Neural Network
+
+        Input:
+            filename: name of the file to save the weights (str)
+        Output:
+            None
+
         '''
         # if no filename is provided, then use the default
         filename = filename or 'weights.txt'
@@ -140,6 +171,12 @@ class ANN:
     def load(self, filename):
         '''
         Load the Artificial Neural Network
+
+        Input:
+            filename: name of the file to load the weights (str)
+        Output:
+            None
+
         '''
         # load the weights from a file
         with open(filename, 'r') as f:
@@ -151,6 +188,11 @@ class ANN:
     def get_classes(self):
         '''
         Get the output classes
+
+        Input:
+            None
+        Output:
+            classes: output classes (list)
         '''
         
         num_out = self.output_units
@@ -167,6 +209,12 @@ class ANN:
     def sigmoid(self, x):
         '''
         Sigmoid activation function
+
+        Input:
+            x: input (float)
+        Output:
+            y: output (float)
+
         '''
         # print('bad x:', x)
         try : return 1 / (1 + math.exp(-x))
@@ -175,6 +223,12 @@ class ANN:
     def d_sigmoid(self, x):
         '''
         Derivative of the sigmoid function
+
+        Input:
+            x: input (float)
+        Output:
+            y: output (float)
+
         '''
         y = self.sigmoid(x)
         return y * (1 - y)
@@ -182,6 +236,11 @@ class ANN:
     def forward(self, instance):
         '''
         Feed forward the Artificial Neural Network
+
+        Input:
+            instance: input instance (list)
+        Output:
+            res: output of the ANN (dict)
         '''
 
         res = {
@@ -218,12 +277,25 @@ class ANN:
         Predict the output of the instance
         later update to include processing of discrete input 
         and output
+
+        Input:
+            instance: input instance (list)
+        Output:
+            prediction: output of the ANN (list)
         '''
         return self.forward(instance)
 
     def loss(self, target, output, no_decay=False):
         '''
         Compute the loss for SGD
+
+        Input:
+            target: target output (list)
+            output: output of the ANN (list)
+            no_decay: if True, then no decay (bool)
+        Output:
+            loss: loss (float)
+
         '''
         loss = 0.0
         # getting all the loss
@@ -250,6 +322,12 @@ class ANN:
         Back propagate the error with momentum, weight 
         decay and learning rate
         SGD
+
+        Input:
+            target: target output (list)
+            output: output of the ANN (list)
+        Output:
+            None
         '''
         # prior delta update
         errors = {
@@ -274,6 +352,12 @@ class ANN:
     def step(self, errors):
         '''
         Update the weights with the errors
+
+        Input:
+            errors: errors (dict)
+        Output:
+            None
+
         '''
         deltas = {
             f'W{i}{i-1}': [[ 0.0 for _ in range(self.topology[i-1] + 1)]
@@ -300,6 +384,12 @@ class ANN:
         '''
         Train the Artificial Neural Network
         k is the number of folds
+
+        Input:
+            train_data: training data (list)
+        Output:
+            None
+
         '''
         if not train_data:
             raise ValueError('No training data provided')
@@ -333,6 +423,12 @@ class ANN:
         '''
         Train the Artificial Neural Network
         k is the number of folds
+
+        Input:
+            train_data: training data (list)
+            vali_data: validation data (list)
+        Output:
+            None
         '''
         print('Training the network...')
         loss_history = []
@@ -393,6 +489,12 @@ class ANN:
     def test(self, test_data):
         '''
         Test the Artificial Neural Network
+
+        Input:
+            test_data: test data (list)
+        Output:
+            accuracy: accuracy of the network (float)
+
         ''' 
         if not test_data:
             raise Exception('No test data provided')
@@ -418,6 +520,15 @@ def k_fold_train(model, train_data, epochs=5000, k=5, debug=False):
     '''
     Train the Artificial Neural Network
     k is the number of folds
+
+    Input:
+        model: model to train (ANN)
+        train_data: training data (list)
+        epochs: number of epochs (int)
+        k: number of folds (int)
+        debug: debug mode (bool)
+    Output:
+        None
     '''
     print(f'Training the network with {k} folds...')
     if not train_data:
