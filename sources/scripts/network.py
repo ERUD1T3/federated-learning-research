@@ -21,7 +21,7 @@ import pandas as pd
 
 class Network:
     '''Network of nodes implemented as a graph'''
-    def __init__(self, nodes=None, edges=None, hyperparams=None, ):
+    def __init__(self, nodes=None, edges=None, hyperparams=None, config=None):
         '''
         Initialize the Network class
         Input:
