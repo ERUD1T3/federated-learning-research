@@ -43,6 +43,8 @@ class ANN:
         self.epochs = hyperparams['num_epochs']
         self.input_units = hyperparams['input_dim']
         self.output_units = hyperparams['output_dim']
+        self.batch_size = hyperparams['batch_size']
+        self.activation = hyperparams['activation']
         self.debug = debug
 
         # initialize the weights at random based 
@@ -232,6 +234,30 @@ class ANN:
         '''
         y = self.sigmoid(x)
         return y * (1 - y)
+    
+    def relu(self, x):
+        '''
+        Rectified Linear Unit activation function
+
+        Input:
+            x: input (float)
+        Output:
+            y: output (float)
+
+        '''
+        return max(0, x)
+
+    def d_relu(self, x):
+        '''
+        Derivative of the Rectified Linear Unit activation function
+
+        Input:
+            x: input (float)
+        Output:
+            y: output (float)
+
+        '''
+        return 1 if x > 0 else 0
 
     def forward(self, instance):
         '''
@@ -263,7 +289,10 @@ class ANN:
                     self.weights[f'W{t}{t-1}'][i][self.topology[t-1]]
 
                 # applying the activation function
-                res[f'layer{t}'][i] = self.sigmoid(res[f'layer{t}'][i])
+                if self.activation == 'relu':
+                    res[f'layer{t}'][i] = self.relu(res[f'layer{t}'][i])
+                elif self.activation == 'sigmoid':
+                    res[f'layer{t}'][i] = self.sigmoid(res[f'layer{t}'][i])
     
 
         # getting the output
@@ -345,7 +374,10 @@ class ANN:
                         errors[f'layer{l}'][i] += errors[f'layer{l+1}'][j] * \
                             self.weights[f'W{l+1}{l}'][j][i]
                 # applying the activation function derivative
-                errors[f'layer{l}'][i] *= self.d_sigmoid(self.res[f'layer{l}'][i])
+                if self.activation == 'relu':
+                    errors[f'layer{l}'][i] *= self.d_relu(self.res[f'layer{l}'][i])
+                elif self.activation == 'sigmoid':
+                    errors[f'layer{l}'][i] *= self.d_sigmoid(self.res[f'layer{l}'][i])
 
         return errors
 
@@ -380,7 +412,7 @@ class ANN:
                 self.weights[f'W{t}{t-1}'][i][self.topology[t-1]] = (1 - self.learning_rate * self.decay) * \
                     self.weights[f'W{t}{t-1}'][i][self.topology[t-1]] + deltas[f'W{t}{t-1}'][i][self.topology[t-1]]
 
-    def training_step(self, train_data):
+    def training_step(self, train_data, size=1):
         '''
         Train the Artificial Neural Network
         k is the number of folds
@@ -396,33 +428,38 @@ class ANN:
         # get the data
         data = train_data
         # shuffle the data
-        random.shuffle(data)
+        # random.shuffle(data)
         # train the network
         loss = 0.0
         # if self.debug:
         #     print('Epoch: ', i, end='')
-        for example in data:
-            # loss += self.step(instance)
-            inputt, target = example[0], example[1]
-            # get the output
-            output = self.forward(inputt)
-            # compute the loss
-            loss += self.loss(target, output)
-            # backpropagate the errors
-            errors = self.backward(target, output)
-            # update the weights
-            self.step(errors)
+        for batch in data:
+            # process a batch
+            for example in batch:
+                # loss += self.step(instance)
+                print(example)
+                # get the input and target
+                inputt, target = example[0], example[1]
+                # print the input and target
+                print(inputt, target)
+                # get the output
+                output = self.forward(inputt)
+                # compute the loss
+                loss += self.loss(target, output)
+                # backpropagate the errors
+                errors = self.backward(target, output)
+                # update the weights
+                self.step(errors)
             
         if self.debug:
             # print('Weights: ', self.weights)
             print(f'Net\'s loss: {loss/len(data): .3f}', end='')
 
-        return loss/len(data)
+        return loss/size # TODO: because of generator 
 
-    def train(self, train_data, vali_data):
+    def train(self, train_data, vali_data=None):
         '''
         Train the Artificial Neural Network
-        k is the number of folds
 
         Input:
             train_data: training data (list)
@@ -430,6 +467,11 @@ class ANN:
         Output:
             None
         '''
+
+        if vali_data is not None:
+            if len(vali_data) < 1:
+                raise ValueError('Validation data is empty')
+
         print('Training the network...')
         loss_history = []
         vali_loss_history = []
@@ -485,6 +527,7 @@ class ANN:
         # save the loss history to csv
         log_csv('logs/loss.csv', [ loss_history, vali_loss_history], 
             ['Training loss', 'Validation loss'])
+        
 
     def test(self, test_data):
         '''

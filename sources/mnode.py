@@ -13,6 +13,7 @@ from message import Message
 from embedding import Embedding
 from dataloader import DataLoader
 from models.ann import ANN
+from utils import load_dir
 
 class Mnode:
     '''A model node on the network'''
@@ -132,6 +133,10 @@ class Mnode:
         Output:
             None
         '''
+
+        # training the model
+        self.node_train()
+
         # process incoming messages
         print(f'Processing incoming messages for {self}')
         self.process_incoming_msgs()
@@ -143,3 +148,60 @@ class Mnode:
         print(f'Outgoing messages for {self}: {self.outgoing_msgs}')
 
         
+    def load_data(self):
+        '''
+        Load the data
+        Input:
+            None
+        Output:
+            None
+        '''
+        # load the data
+        self.data = DataLoader(data_path=self.data_path)
+
+    def node_train(self):
+        '''
+        Train the model
+        Input:
+            None
+        Output:
+            None
+        '''
+
+        self.model.train(self.data)
+
+
+if __name__ == '__main__':
+    # test training on the node
+    
+    # 1000060 -> 0
+    # node model hyperparameters
+    h = {
+        'input_dim': 1, # TODO: figure out how to get this from the dataset,
+        'output_dim': 1,
+        'num_epochs': 10,
+        'batch_size': 1,
+        'learning_rate': 0.01,
+        # 'optimizer': 'sgd',
+        'loss': 'mse',
+        'activation': 'relu',
+        'hidden_dims': [28, 28],
+        'momentum': 0.9,
+        'weight_decay': 0.0005,
+        'data_dir': '../datasets/bleaching',
+        'k_fold': 5,
+        # ... TODO: find minimal set of hyperparameters
+    }
+
+    # load the datafiles name from the data directory
+    datafiles = load_dir(h['data_dir'])
+    node = Mnode(id=4, data_path=datafiles[4], hyperparams=h)
+
+    # get a batch
+    batch = node.data.get_batch()
+
+    # print a batch of the data
+    print(batch)
+
+    # train the model
+    # node.model.training_step(batch)
