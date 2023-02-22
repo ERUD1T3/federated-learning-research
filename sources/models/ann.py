@@ -53,6 +53,8 @@ class ANN:
                         hyperparams['hidden_dims'] + \
                         [self.output_units]
 
+        # wieghts, distance, 
+        # calculate the distance at the receiptient, seq number, weight, node id, 
         self.weights = {
             f'W{i}{i-1}': [[self.rand_init() 
                         for _ in range(self.topology[i-1] + 1)]

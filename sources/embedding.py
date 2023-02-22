@@ -117,3 +117,5 @@ class Embedding:
             string representation of the embedding vector (string)
         '''
         return f'Embedding({self.vector})'
+    
+    
