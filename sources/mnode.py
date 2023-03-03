@@ -177,7 +177,7 @@ if __name__ == '__main__':
     # 1000060 -> 0
     # node model hyperparameters
     h = {
-        'input_dim': 1, # TODO: figure out how to get this from the dataset,
+        'input_dim': 1,  # TODO: figure out how to get this from the dataset,
         'output_dim': 1,
         'num_epochs': 10,
         'batch_size': 1,
@@ -200,8 +200,13 @@ if __name__ == '__main__':
     # get a batch
     batch = node.data.get_batch()
 
+    # put it into list
+    # batch = [x for x in batch]
+
     # print a batch of the data
     print(batch)
 
     # train the model
-    # node.model.training_step(batch)
+    loss = node.model.training_step(batch)
+    # print the loss
+    print(loss)
