@@ -9,11 +9,11 @@
 #############################################################
 
 import numpy as np
-from message import Message
-from embedding import Embedding
-from dataloader import DataLoader
-from models.ann import ANN
-from utils import load_dir
+from sources.message import Message
+from sources.embedding import Embedding
+from sources.dataloader import DataLoader
+from sources.models.ann import ANN
+from sources.utils import load_dir
 
 class Mnode:
     '''A model node on the network'''

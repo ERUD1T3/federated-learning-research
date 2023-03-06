@@ -31,6 +31,17 @@ class DataLoader:
         self.target = ['Percent_Bleached_Sum']
         self.inputs = [
             ## Predictors ########################################################
+            # Categorical #
+            # 'Data_Source',  # (AGRRA, Donner, FRRP, Kumagai, McClanahan, Nuryana, Reef_Check, Safaie, Setiawan)
+            # 'Ocean_Name',  # (Arabian Gulf, Atlantic, Indian, Pacific, Read Sea))
+            # 'Realm_Name',  # (
+            # # Central Indo-Pacific, Eastern Indo-Pacific, Western Indo-Pacific,
+            # # Temperate Australasia, Temperate Northern Atlantic,
+            # # Temperate Northern Pacific, Temperate Southern Africa,
+            # # Tropical Atlantic, Tropical Eastern Pacific)
+            # 'Exposure',  # (Exposed, Sheltered, Sometimes)
+            # 'Bleaching_Level',  # (Colony, Population)
+            # 'Substrate_Name', # (Hard Coral)
             # Continuous #
             'Latitude_Degrees', 'Longitude_Degrees', 'Distance_to_Shore',
             'Cyclone_Frequency', 'Depth_m', 'Percent_Cover_Sum', 'ClimSST',
@@ -45,7 +56,17 @@ class DataLoader:
             'TSA_Frequency_Standard_Deviation', 'TSA_FrequencyMax',
             'TSA_FrequencyMean', 'TSA_DHW', 'TSA_DHW_Standard_Deviation',
             'TSA_DHWMax', 'TSA_DHWMean',
-            # Categorical # 
+
+            ## below are not used as predictors #######################################
+            # 'Site_ID','Sample_ID',  'Reef_ID', , 'Site_Name', 'Date_Day', 'Date_Month',
+            # 'Date_Year', 'Bleaching_ID', ,
+            # 'S1', 'S2', 'S3', 'S4', 'Severity_Code',
+            # 'Bleaching_Prevalence_Score', 'Code_Comment', 'Cover_ID', 
+            # 'Calculated_S1', 'Calculated_S2', 'Calculated_S3',
+            # 'Calculated_S4', 'Country_Name',
+        ]
+
+        self.categorical_inputs = [
             'Data_Source', # (AGRRA, Donner, FRRP, Kumagai, McClanahan, Nuryana, Reef_Check, Safaie, Setiawan)
             'Ocean_Name', # (Arabian Gulf, Atlantic, Indian, Pacific, Read Sea))
             'Realm_Name', # (
@@ -56,15 +77,99 @@ class DataLoader:
             'Exposure', # (Exposed, Sheltered, Sometimes)
             'Bleaching_Level', # (Colony, Population)
             # 'Substrate_Name', # (Hard Coral)
-
-            ## below are not used as predictors #######################################
-            # 'Site_ID','Sample_ID',  'Reef_ID', , 'Site_Name', 'Date_Day', 'Date_Month',
-            # 'Date_Year', 'Bleaching_ID', ,
-            # 'S1', 'S2', 'S3', 'S4', 'Severity_Code',
-            # 'Bleaching_Prevalence_Score', 'Code_Comment', 'Cover_ID', 
-            # 'Calculated_S1', 'Calculated_S2', 'Calculated_S3',
-            # 'Calculated_S4', 'Country_Name',
         ]
+
+    def handle_inputs(self, _input):
+        """
+        Handle the inputs
+        Convert categorical inputs to one-hot
+        Convert continuous inputs to float
+        Input:
+            _input: input data (float or string)
+        Output:
+            _input: processed input (float or list)
+       """
+        # if the input is a string, convert it to a one-hot vector
+        if isinstance(_input, float):
+            return _input
+
+        if isinstance(_input, int):
+            return float(_input)
+
+        if isinstance(_input, str):
+            # if _input in self.categorical_inputs:
+            # if input_index == 0: # Data_Source
+            if _input == 'AGRRA':
+                return [1, 0, 0, 0, 0, 0, 0, 0, 0]
+            elif _input == 'Donner':
+                return [0, 1, 0, 0, 0, 0, 0, 0, 0]
+            elif _input == 'FRRP':
+                return [0, 0, 1, 0, 0, 0, 0, 0, 0]
+            elif _input == 'Kumagai':
+                return [0, 0, 0, 1, 0, 0, 0, 0, 0]
+            elif _input == 'McClanahan':
+                return [0, 0, 0, 0, 1, 0, 0, 0, 0]
+            elif _input == 'Nuryana':
+                return [0, 0, 0, 0, 0, 1, 0, 0, 0]
+            elif _input == 'Reef_Check':
+                return [0, 0, 0, 0, 0, 0, 1, 0, 0]
+            elif _input == 'Safaie':
+                return [0, 0, 0, 0, 0, 0, 0, 1, 0]
+            elif _input == 'Setiawan':
+                return [0, 0, 0, 0, 0, 0, 0, 0, 1]
+
+        # elif input_index == 1: # Ocean_Name
+            elif _input == 'Arabian Gulf':
+                return [1, 0, 0, 0, 0]
+            elif _input == 'Atlantic':
+                return [0, 1, 0, 0, 0]
+            elif _input == 'Indian':
+                return [0, 0, 1, 0, 0]
+            elif _input == 'Pacific':
+                return [0, 0, 0, 1, 0]
+            elif _input == 'Red Sea':
+                return [0, 0, 0, 0, 1]
+
+        # elif input_index == 2: # Realm_Name
+            elif _input == 'Central Indo-Pacific':
+                return [1, 0, 0, 0, 0, 0, 0, 0, 0]
+            elif _input == 'Eastern Indo-Pacific':
+                return [0, 1, 0, 0, 0, 0, 0, 0, 0]
+            elif _input == 'Western Indo-Pacific':
+                return [0, 0, 1, 0, 0, 0, 0, 0, 0]
+            elif _input == 'Temperate Australasia':
+                return [0, 0, 0, 1, 0, 0, 0, 0, 0]
+            elif _input == 'Temperate Northern Atlantic':
+                return [0, 0, 0, 0, 1, 0, 0, 0, 0]
+            elif _input == 'Temperate Northern Pacific':
+                return [0, 0, 0, 0, 0, 1, 0, 0, 0]
+            elif _input == 'Temperate Southern Africa':
+                return [0, 0, 0, 0, 0, 0, 1, 0, 0]
+            elif _input == 'Tropical Atlantic':
+                return [0, 0, 0, 0, 0, 0, 0, 1, 0]
+            elif _input == 'Tropical Eastern Pacific':
+                return [0, 0, 0, 0, 0, 0, 0, 0, 1]
+
+        # elif input_index == 3: # Exposure
+            elif _input == 'Exposed':
+                return [1, 0, 0]
+            elif _input == 'Sheltered':
+                return [0, 1, 0]
+            elif _input == 'Sometimes':
+                return [0, 0, 1]
+
+        # elif input_index == 4: # Bleaching_Level
+            elif _input == 'Colony':
+                return [1, 0]
+            elif _input == 'Population':
+                return [0, 1]
+            elif _input == '':
+                return float("-inf")
+            else:
+                return float(_input)
+
+
+
 
     def get_batch(self, batch_size=1):
         '''
@@ -86,7 +191,7 @@ class DataLoader:
             # get the header
             header = next(csv_reader)
             # find the index of the target
-            target_index = header.index(self.target)
+            target_index = header.index(self.target[0])
             # find the indices of the inputs
             input_indices = [header.index(i) for i in self.inputs]
             # iterate through the rows
@@ -96,7 +201,7 @@ class DataLoader:
                 # get the inputs
                 inputs = [row[i] for i in input_indices]
                 # convert the inputs to floats. TODO: handle non-float inputs
-                inputs = [float(i) for i in inputs]
+                inputs = [self.handle_inputs(v) for v in inputs]
                 # collect the data in batches
                 batch.append((inputs, target))
 

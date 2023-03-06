@@ -15,7 +15,7 @@
 
 import math
 import random
-from utils import log_csv
+from sources.utils import log_csv
 from copy import deepcopy
 
 class ANN:
@@ -414,50 +414,51 @@ class ANN:
                 self.weights[f'W{t}{t-1}'][i][self.topology[t-1]] = (1 - self.learning_rate * self.decay) * \
                     self.weights[f'W{t}{t-1}'][i][self.topology[t-1]] + deltas[f'W{t}{t-1}'][i][self.topology[t-1]]
 
-    def training_step(self, train_data, size=1):
+    def training_step(self, batch, batch_size=1):
         '''
         Train the Artificial Neural Network
-        k is the number of folds
+
 
         Input:
             train_data: training data (list)
+            batch_size: size of the batch (int)
         Output:
-            None
+            loss: loss (float)
 
         '''
-        if not train_data:
+        if not batch:
             raise ValueError('No training data provided')
         # get the data
-        data = train_data
+        data = batch
         # shuffle the data
         # random.shuffle(data)
         # train the network
         loss = 0.0
         # if self.debug:
         #     print('Epoch: ', i, end='')
-        for batch in data:
-            # process a batch
-            for example in batch:
-                # loss += self.step(instance)
-                print(example)
-                # get the input and target
-                inputt, target = example[0], example[1]
-                # print the input and target
-                print(inputt, target)
-                # get the output
-                output = self.forward(inputt)
-                # compute the loss
-                loss += self.loss(target, output)
-                # backpropagate the errors
-                errors = self.backward(target, output)
-                # update the weights
-                self.step(errors)
+
+        # process a batch
+        for example in batch:
+            # loss += self.step(instance)
+            print(example)
+            # get the input and target
+            inputt, target = example[0], example[1]
+            # print the input and target
+            print(inputt, target)
+            # get the output
+            output = self.forward(inputt)
+            # compute the loss
+            loss += self.loss(target, output)
+            # backpropagate the errors
+            errors = self.backward(target, output)
+            # update the weights
+            self.step(errors)
             
         if self.debug:
             # print('Weights: ', self.weights)
-            print(f'Net\'s loss: {loss/len(data): .3f}', end='')
+            print(f'Net\'s loss: {loss/batch_size: .3f}', end='')
 
-        return loss/size # TODO: because of generator 
+        return loss/batch_size # TODO: because of generator
 
     def train(self, train_data, vali_data=None):
         '''
