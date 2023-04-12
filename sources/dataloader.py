@@ -13,7 +13,7 @@ import os
 
 class DataLoader:
     '''
-    Class to handle data loading for the bleaching dataset
+    Class to handle data loading for the flbleaching dataset
     '''
 
     def __init__(self, data_path, shuffle=False):

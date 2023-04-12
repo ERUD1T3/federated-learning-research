@@ -188,7 +188,7 @@ if __name__ == '__main__':
         'hidden_dims': [28, 28],
         'momentum': 0.9,
         'weight_decay': 0.0005,
-        'data_dir': '../datasets/bleaching',
+        'data_dir': '../datasets/flbleaching',
         'k_fold': 5,
         # ... TODO: find minimal set of hyperparameters
     }
